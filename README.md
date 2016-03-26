@@ -26,3 +26,14 @@ The project is deployed on Google Application Engine.
 - 	
 
 
+## Issues fixing
+### Adding new item works on localhost but not on remote server
+After hours of search and a good sleep, I found the explanation from [official documentations](https://cloud.google.com/appengine/docs/php/googlestorage/):
+>One major difference between writing to a local disk and writing to Google Cloud Storage is that Google Cloud Storage doesn’t support modifying or appending to a file after you close it.
+
+Therefore, when trying to add new record data `$new_record`, `file_put_contents($filename, $new_record, FILE_APPEND | LOCK_EX);` works on localhost but **NOT** on Google Cloud Storage. So,
+
+>... you must create a new file with the same name, which overwrites the original.
+
+by `file_put_contents($filename, file_get_contents($filename) . $new_record);`
+
