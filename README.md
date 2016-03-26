@@ -12,3 +12,9 @@ The project is deployed on Google Application Engine.
 
 ## PHP Version
 - `str_getcsv()`: PHP 5 >= 5.3.0, PHP 7
+
+## Assumptions
+1. A valid value for `name` is a single **capitalized** word, 1 <= #characters <= 45
+2. A valid value for `employeeno` only consists of digits, 1 <= #digits <= 20
+3. A valid value for `gender` is either `Male` or `Female`
+4. A valid value for `department` is a single word, 1 <= #characters <= 45

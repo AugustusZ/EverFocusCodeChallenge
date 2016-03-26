@@ -17,6 +17,14 @@
 </head>
 
 <body>
+    <script type="text/javascript">
+        function clearAll() {
+            $(":text").val("");
+            $("select").val("Male");
+        }
+
+    </script>
+
     <h1>Hello, world!</h1>
 
     <?php
@@ -52,6 +60,58 @@
     }
     ?>
 
+        <form name="form" method="GET" action="">
+            <div id='fields'>
+                <label>Name</label>
+                <input type="text" name="name" value="Steward" required pattern="^[A-Z][a-z]{1,44}$">
+
+                <br>
+
+                <label>Employee Number</label>
+                <input type="text" name="employeeno" value="0000000001" required pattern="^\d{1,20}$">
+
+                <br>
+
+                <label>Gender</label>
+                <select name="gender" required>
+                    <option value="male" selected>Male</option>
+                    <option value="female">Female</option>
+                </select>
+
+                <br>
+
+                <label>Department</label>
+                <input type="text" name="department" value="Engineer" required pattern="^[a-zA-Z]{1,45}$">
+            </div>
+            <div id="buttons">
+                <input id="submit" type="submit" name="insert" value="Insert" autofocus>
+                <input type="button" value="Clear" onclick="clearAll()">
+            </div>
+        </form>
+
+
+        <?php
+    
+    if (isset($_GET["insert"])) { 
+        echo "<pre>";
+        print_r($_GET);
+        echo "</pre>";
+        insert(); 
+    }
+    
+    function insert() {
+        insert_to_html();
+        insert_to_database();
+    }
+    
+    function insert_to_html() {
+        
+    }
+    
+    function insert_to_database() {
+        
+    }
+    ?>
 </body>
 
 </html>
