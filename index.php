@@ -28,13 +28,14 @@
     <h1>Hello, world!</h1>
 
     <?php
-    $database = "employee.csv";
+    $database = 'employee.csv';
+    $database = 'gs://everfocus/employee.csv';
     
     if (isset($_GET["insert"])) { 
         insert_to_database($database); 
     }
     
-    display_csv('gs://everfocus/'.$database, "r");
+    display_csv($database, "r");
 
     function parse_to_tr($string, $tag_name) {
         $html = "";
@@ -77,7 +78,7 @@
         // Write the contents to the file, 
         // using the FILE_APPEND flag to append the content to the end of the file
         // and the LOCK_EX flag to prevent anyone else writing to the file at the same time
-        file_put_contents('gs://everfocus/'.$filename, file_get_contents('gs://everfocus/'.$filename) . $new_record);
+        file_put_contents($filename, file_get_contents($filename) . $new_record);
 //        file_put_contents('gs://everfocus/'.$filename, $new_record, FILE_APPEND);
 
 //        $fp = fopen($filename, 'a');
