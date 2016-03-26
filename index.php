@@ -67,7 +67,7 @@
     
     function insert_to_database($filename) {
         // get values for insertion
-        $new_values = array($_GET[department], $_GET[employeeno], $_GET[name], $_GET[gender]);//array_slice($_GET, 0, count($_GET) - 1, true);
+        $new_values = array($_GET['department'], $_GET['employeeno'], $_GET['name'], $_GET['gender']);//array_slice($_GET, 0, count($_GET) - 1, true);
         
         $id = 2;// dummy value for unimplemented get_next_id($filename);
         
