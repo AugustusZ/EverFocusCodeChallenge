@@ -1,9 +1,10 @@
 # EverFocus Code Challenge
 
-Please click [here]() to see this project. 
+Please click [here](http://everfocuscodechallenge.appspot.com/) to see this project. 
 
 ## Development tool
-- Bracket
+- Brackets
+- Google App Engine Launcher
 
 
 ## Server
