@@ -10,27 +10,48 @@
 
     <!-- Bootstrap -->
     <link href="bootstrap.css" rel="stylesheet">
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="bootstrap.js"></script>
 </head>
 
 <body>
     <h1>Hello, world!</h1>
 
     <?php
-
-        $file = fopen("employee.csv","r");
-
-        while(! feof($file)) {
-            print_r(fgetcsv($file));
+    display_csv("employee.csv", "r");
+    
+    function parse_to_tr($string, $tag_name) {
+        $html = "";
+        $array = str_getcsv($string, $delimiter = ";", $enclosure = '"');
+        foreach ($array as $value) {
+            $html .= "<$tag_name>$value</$tag_name>";
         }
+        $html = "<tr>$html</tr>";
+            
+        return $html;
+    }
+    
+    function display_csv($filename) {
+        // when reading files either on or created by a Macintosh computer
+        ini_set("auto_detect_line_endings", true);
+        
+        echo "<table>";
 
+        $file = fopen($filename, "r");
+        echo parse_to_tr(fgets($file), "th"); 
+
+        // read one line from csv file in each loop
+        while(! feof($file)) {
+            echo parse_to_tr(fgets($file), "td"); 
+        }
         fclose($file);
+
+        echo "</table>";
+    }
     ?>
 
-
-        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <!-- Include all compiled plugins (below), or include individual files as needed -->
-        <script src="bootstrap.js"></script>
 </body>
 
 </html>
