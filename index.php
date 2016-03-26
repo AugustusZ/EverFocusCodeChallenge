@@ -28,24 +28,26 @@
     <h1>Hello, world!</h1>
 
     <?php
-    $database = 'employee.csv';
-    $database = 'gs://everfocus/employee.csv';
+    $database = 'employee.csv'; // for locally developing
+//    $database = 'gs://everfocus/employee.csv'; // for remote server test
     
-    if (isset($_GET["insert"])) { 
+    if (isset($_GET['insert'])) { 
         insert_to_database($database); 
     }
     
-    display_csv($database, "r");
+    $next_id = display_csv($database, "r");
 
     function parse_to_tr($string, $tag_name) {
         $html = "";
         $array = str_getcsv($string, $delimiter = ";", $enclosure = '"');
-        foreach ($array as $value) {
+        $array_for_display = array($array[3], $array[2], $array[4], $array[1]);
+        foreach ($array_for_display as $value) {
             $html .= "<$tag_name>$value</$tag_name>";
         }
         $html = "<tr>$html</tr>";
             
-        return $html;
+        echo $html;
+        return $array[0];
     }
     
     function display_csv($filename) {
@@ -55,39 +57,29 @@
         echo "<table>";
 
         $file = fopen($filename, "r");
-        echo parse_to_tr(fgets($file), "th"); 
+        parse_to_tr(fgets($file), "th"); 
+        
+        $max_id = 0;
 
         // read one line from csv file in each loop
         while(! feof($file)) {
-            echo parse_to_tr(fgets($file), "td"); 
+             $max_id = max(parse_to_tr(fgets($file), "td"), $max_id); 
         }
         fclose($file);
 
         echo "</table>";
+        return $max_id + 1;
     }
     
     function insert_to_database($filename) {
         // get values for insertion
         $new_values = array($_GET['department'], $_GET['employeeno'], $_GET['name'], $_GET['gender']);//array_slice($_GET, 0, count($_GET) - 1, true);
         
-        $id = 2;// dummy value for unimplemented get_next_id($filename);
-        
         // get a formatted string valid for database record
-        $new_record = $id . ';"' . implode('";"', $new_values) . "\"\n";
+        $new_record = $_GET['id'] . ';"' . implode('";"', $new_values) . "\"\n";
         
-        // Write the contents to the file, 
-        // using the FILE_APPEND flag to append the content to the end of the file
-        // and the LOCK_EX flag to prevent anyone else writing to the file at the same time
+        // Write the contents to the file
         file_put_contents($filename, file_get_contents($filename) . $new_record);
-//        file_put_contents('gs://everfocus/'.$filename, $new_record, FILE_APPEND);
-
-//        $fp = fopen($filename, 'a');
-//        fwrite($fp, $new_record);
-//        fclose($fp);
-    }
-    
-    function get_next_id($filename) {
-        
     }
     
     function clean($array) {        
@@ -119,6 +111,7 @@
                 <input type="text" name="department" value="Engineer" required pattern="^[a-zA-Z]{1,45}$">
             </div>
             <div id="buttons">
+                <input type="hidden" name="id" value="<?php echo $next_id;?>">
                 <input id="submit" type="submit" name="insert" value="Insert" autofocus>
                 <input type="button" value="Clear" onclick="clearAll()">
             </div>
