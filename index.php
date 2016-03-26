@@ -28,8 +28,14 @@
     <h1>Hello, world!</h1>
 
     <?php
-    display_csv("employee.csv", "r");
+    $database = "employee.csv";
     
+    if (isset($_GET["insert"])) { 
+        insert_to_database($database); 
+    }
+    
+    display_csv($database, "r");
+
     function parse_to_tr($string, $tag_name) {
         $html = "";
         $array = str_getcsv($string, $delimiter = ";", $enclosure = '"');
@@ -58,6 +64,29 @@
 
         echo "</table>";
     }
+    
+    function insert_to_database($filename) {
+        // get values for insertion
+        $new_values = array($_GET[department], $_GET[employeeno], $_GET[name], $_GET[gender]);//array_slice($_GET, 0, count($_GET) - 1, true);
+        
+        $id = 2;// dummy value for unimplemented get_next_id($filename);
+        
+        // get a formatted string valid for database record
+        $new_record = $id . ';"' . implode('";"', $new_values) . "\"\n";
+        
+        // Write the contents to the file, 
+        // using the FILE_APPEND flag to append the content to the end of the file
+        // and the LOCK_EX flag to prevent anyone else writing to the file at the same time
+        file_put_contents($filename, $new_record, FILE_APPEND | LOCK_EX);
+    }
+    
+    function get_next_id($filename) {
+        
+    }
+    
+    function clean($array) {        
+        return array($array[department], $array[employeeno], $array[name], $array[gender]);
+    }
     ?>
 
         <form name="form" method="GET" action="">
@@ -74,8 +103,8 @@
 
                 <label>Gender</label>
                 <select name="gender" required>
-                    <option value="male" selected>Male</option>
-                    <option value="female">Female</option>
+                    <option value="Male" selected>Male</option>
+                    <option value="Female">Female</option>
                 </select>
 
                 <br>
@@ -90,28 +119,7 @@
         </form>
 
 
-        <?php
-    
-    if (isset($_GET["insert"])) { 
-        echo "<pre>";
-        print_r($_GET);
-        echo "</pre>";
-        insert(); 
-    }
-    
-    function insert() {
-        insert_to_html();
-        insert_to_database();
-    }
-    
-    function insert_to_html() {
-        
-    }
-    
-    function insert_to_database() {
-        
-    }
-    ?>
+
 </body>
 
 </html>
