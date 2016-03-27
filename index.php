@@ -28,12 +28,13 @@
         }
 
     </script>
-    <div id="headerDiv" class="container-fluid">
-        <h1>Hello, world!</h1>
-    </div>
-    <div id="tableDiv" class="container-fluid">
+    <div class="container">
+        <div id="headerDiv" class="container-fluid">
+            <h1>Hello, world!</h1>
+        </div>
+        <div id="tableDiv" class="table-responsive">
 
-        <?php
+            <?php
     $database = 'employee.csv'; // for locally developing
 //    $database = 'gs://everfocus/employee.csv'; // for remote server test
     
@@ -44,6 +45,10 @@
     $next_id = display_csv($database, "r");
     
     function parse_to_tr($string, $tag_name) {
+        if (!$string) {
+            return -1;
+        }
+        
         $html = "";
         
         if ($tag_name == 'th') {
@@ -71,7 +76,7 @@
         $file = fopen($filename, "r");
         parse_to_tr(fgets($file), "th"); 
         
-        $max_id = 0;
+        $max_id = -1;
 
         // read one line from csv file in each loop
         while(! feof($file)) {
@@ -95,88 +100,79 @@
     }
     ?>
 
-    </div>
+        </div>
 
 
 
-
-    <!-- Button trigger modal -->
-    <button class="btn btn-primary" data-toggle="modal" data-target="#myModalNorm">Add record</button>
-
-    <!-- Modal -->
-    <div class="modal fade" id="myModalNorm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">
-                        <span aria-hidden="true">&times;</span>
-                        <span class="sr-only">Close</span>
-                    </button>
-                    <h4 class="modal-title" id="myModalLabel">
+        <div class="col-sm-offset-10 col-sm-2 col-xs-offset-7 col-xs-5">
+            <!-- Button trigger modal -->
+            <button class="btn btn-primary" data-toggle="modal" data-target="#myModalNorm">Add record</button>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="myModalNorm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                            <span class="sr-only">Close</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">
                     New employee info
                 </h4>
-                </div>
+                    </div>
 
-                <!-- Modal Body -->
-                <div class="modal-body">
-                    <form class="form-horizontal" name="form" id="form" method="GET" action="" role="form">
-                        <div class="form-group">
-                            <label for="name" class="col-sm-2 control-label">Name</label>
-                            <div class="col-sm-10">
-                                <input type="text" name="name" id="name" placeholder="Steward" value="Steward" required pattern="^[A-Z][a-z]{1,44}$">
+                    <!-- Modal Body -->
+                    <div class="modal-body">
+                        <form class="form-horizontal" name="form" id="form" method="GET" action="" role="form">
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 col-xs-6 control-label">Name</label>
+                                <div class="col-sm-10 col-xs-8">
+                                    <input type="text" name="name" id="name" class="form-control" placeholder="Steward" value="Steward" required pattern="^[A-Z][a-z]{1,44}$">
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="employeeno" class="col-sm-2 control-label">EmployeeNo</label>
-                            <div class="col-sm-10">
-                                <input type="text" name="employeeno" id="employeeno" placeholder="0000000001" value="0000000001" required pattern="^\d{1,20}$">
+                            <div class="form-group">
+                                <label for="employeeno" class="col-sm-2 col-xs-6 control-label">EmployeeNo</label>
+                                <div class="col-sm-10 col-xs-8">
+                                    <input type="text" name="employeeno" id="employeeno" class="form-control" placeholder="0000000001" value="0000000001" required pattern="^\d{1,20}$">
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="gender" class="col-sm-2 control-label">Gender</label>
-                            <div class="radio col-sm-10">
-                                <label>
-                                    <input type="radio" name="gender" value="Male" checked> Male
-                                </label>
-                                <br>
-                                <label>
-                                    <input type="radio" name="gender" value="Female"> Female
-                                </label>
+                            <div class="form-group">
+                                <label for="gender" class="col-sm-2 col-xs-6 control-label">Gender</label>
+                                <div class="radio col-sm-10 col-xs-8">
+                                    <label>
+                                        <input type="radio" name="gender" value="Male" checked> Male
+                                    </label>
+                                    <br>
+                                    <label>
+                                        <input type="radio" name="gender" value="Female"> Female
+                                    </label>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="department" class="col-sm-2 control-label">Department</label>
-                            <div class="col-sm-10">
-                                <input type="text" name="department" id="department" placeholder="Engineer" value="Engineer" required pattern="^[a-zA-Z]{1,45}$">
+                            <div class="form-group">
+                                <label for="department" class="col-sm-2 col-xs-6 control-label">Department</label>
+                                <div class="col-sm-10 col-xs-8">
+                                    <input type="text" name="department" id="department" class="form-control" placeholder="Engineer" value="Engineer" required pattern="^[a-zA-Z]{1,45}$">
+                                </div>
                             </div>
-                        </div>
 
-                        <input type="hidden" name="id" value="<?php echo $next_id;?>">
-                    </form>
-                </div>
+                            <input type="hidden" name="id" value="<?php echo $next_id;?>">
+                        </form>
+                    </div>
 
-                <!-- Modal Footer -->
-                <div class="modal-footer">
-                    <div class="col-sm-offset-2 col-sm-10">
-                        <input type="button" value="Clear" class="btn btn-default" onclick="clearAll()">
-                        <!--                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
-                        <input form="form" type="submit" name="insert" class="btn btn-primary" id="submit" value="Insert" autofocus>
+                    <!-- Modal Footer -->
+                    <div class="modal-footer">
+                        <div>
+                            <input type="button" value="Clear" class="btn btn-default" onclick="clearAll()">
+                            <!--                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
+                            <input form="form" type="submit" name="insert" class="btn btn-primary" id="submit" value="Insert" autofocus>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-
-
-
-
-
-
-
-
-
 </body>
 
 </html>
