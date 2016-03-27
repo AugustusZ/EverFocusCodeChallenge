@@ -8,26 +8,32 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Part 1</title>
 
-    <!-- Bootstrap -->
-    <link href="bootstrap.css" rel="stylesheet">
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="bootstrap.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
 </head>
 
 <body>
     <script type="text/javascript">
         function clearAll() {
             $(":text").val("");
-            $("select").val("Male");
+            $("input:radio").attr("checked", false);
         }
 
     </script>
+    <div id="headerDiv" class="container-fluid">
+        <h1>Hello, world!</h1>
+    </div>
+    <div id="tableDiv" class="container-fluid">
 
-    <h1>Hello, world!</h1>
-
-    <?php
+        <?php
     $database = 'employee.csv'; // for locally developing
 //    $database = 'gs://everfocus/employee.csv'; // for remote server test
     
@@ -36,11 +42,17 @@
     }
     
     $next_id = display_csv($database, "r");
-
+    
     function parse_to_tr($string, $tag_name) {
         $html = "";
-        $array = str_getcsv($string, $delimiter = ";", $enclosure = '"');
-        $array_for_display = array($array[3], $array[2], $array[4], $array[1]);
+        
+        if ($tag_name == 'th') {
+            $array_for_display = array('Name', 'EmployeeNo', 'Gender', 'Department');
+        } else {
+            $array = str_getcsv($string, $delimiter = ";", $enclosure = '"');
+            $array_for_display = array($array[3], $array[2], $array[4], $array[1]);
+        }
+        
         foreach ($array_for_display as $value) {
             $html .= "<$tag_name>$value</$tag_name>";
         }
@@ -54,7 +66,7 @@
         // when reading files either on or created by a Macintosh computer
         ini_set("auto_detect_line_endings", true);
         
-        echo "<table>";
+        echo '<table class="table table-bordered table-hover">';
 
         $file = fopen($filename, "r");
         parse_to_tr(fgets($file), "th"); 
@@ -67,7 +79,7 @@
         }
         fclose($file);
 
-        echo "</table>";
+        echo '</table>';
         return $max_id + 1;
     }
     
@@ -81,41 +93,87 @@
         // Write the contents to the file
         file_put_contents($filename, file_get_contents($filename) . $new_record);
     }
-    
-    function clean($array) {        
-        return array($array[department], $array[employeeno], $array[name], $array[gender]);
-    }
     ?>
 
-        <form name="form" method="GET" action="">
-            <div id='fields'>
-                <label>Name</label>
-                <input type="text" name="name" value="Steward" required pattern="^[A-Z][a-z]{1,44}$">
+    </div>
 
-                <br>
 
-                <label>Employee Number</label>
-                <input type="text" name="employeeno" value="0000000001" required pattern="^\d{1,20}$">
 
-                <br>
 
-                <label>Gender</label>
-                <select name="gender" required>
-                    <option value="Male" selected>Male</option>
-                    <option value="Female">Female</option>
-                </select>
+    <!-- Button trigger modal -->
+    <button class="btn btn-primary" data-toggle="modal" data-target="#myModalNorm">Add record</button>
 
-                <br>
+    <!-- Modal -->
+    <div class="modal fade" id="myModalNorm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                    New employee info
+                </h4>
+                </div>
 
-                <label>Department</label>
-                <input type="text" name="department" value="Engineer" required pattern="^[a-zA-Z]{1,45}$">
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <form class="form-horizontal" name="form" id="form" method="GET" action="" role="form">
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="name" id="name" placeholder="Steward" value="Steward" required pattern="^[A-Z][a-z]{1,44}$">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="employeeno" class="col-sm-2 control-label">EmployeeNo</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="employeeno" id="employeeno" placeholder="0000000001" value="0000000001" required pattern="^\d{1,20}$">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="gender" class="col-sm-2 control-label">Gender</label>
+                            <div class="radio col-sm-10">
+                                <label>
+                                    <input type="radio" name="gender" value="Male" checked> Male
+                                </label>
+                                <br>
+                                <label>
+                                    <input type="radio" name="gender" value="Female"> Female
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="department" class="col-sm-2 control-label">Department</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="department" id="department" placeholder="Engineer" value="Engineer" required pattern="^[a-zA-Z]{1,45}$">
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="id" value="<?php echo $next_id;?>">
+                    </form>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <input type="button" value="Clear" class="btn btn-default" onclick="clearAll()">
+                        <!--                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
+                        <input form="form" type="submit" name="insert" class="btn btn-primary" id="submit" value="Insert" autofocus>
+                    </div>
+                </div>
             </div>
-            <div id="buttons">
-                <input type="hidden" name="id" value="<?php echo $next_id;?>">
-                <input id="submit" type="submit" name="insert" value="Insert" autofocus>
-                <input type="button" value="Clear" onclick="clearAll()">
-            </div>
-        </form>
+        </div>
+    </div>
+
+
+
+
+
+
+
 
 
 
