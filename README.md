@@ -17,13 +17,13 @@ The project is deployed on Google Application Engine.
 - A valid value for `name` is a single **capitalized** word, 1 <= #characters <= 45
 - A valid value for `employeeno` only consists of digits, 1 <= #digits <= 20
 - A valid value for `gender` is either `Male` or `Female`
-- A valid value for `department` is a single word, 1 <= #characters <= 45
+- A valid value for `department` is a word or words, 1 <= #characters <= 45
 - The client has the access to modify database, i.e., the database file `employee.csv` will be updated with the data client side send. To achieve this, configure `php.ini` as
 
 		google_app_engine.disable_readonly_filesystem = 1 
 		
 	This is, of course, dangerous when there is no access restriction. 
-- 	
+
 
 
 ## Issues fixing
