@@ -5,8 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Part 1</title>
+    <title>Everfocus Code Challenge</title>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <!-- Latest compiled and minified CSS -->
@@ -28,15 +27,17 @@
         }
 
     </script>
+
     <div class="container">
         <div id="headerDiv" class="container-fluid">
-            <h1>Hello, world!</h1>
+            <h1>Part 1</h1>
         </div>
+
         <div id="tableDiv" class="table-responsive">
 
             <?php
     $database = 'employee.csv'; // for locally developing
-//    $database = 'gs://everfocus/employee.csv'; // for remote server test
+    $database = 'gs://everfocus/employee.csv'; // for remote server test
     
     if (isset($_GET['insert'])) { 
         insert_to_database($database); 
@@ -85,7 +86,7 @@
         fclose($file);
 
         echo '</table>';
-        return $max_id + 1;
+        return $max_id + 1; // return the next valid id (auto-increment)
     }
     
     function insert_to_database($filename) {
@@ -99,10 +100,7 @@
         file_put_contents($filename, file_get_contents($filename) . $new_record);
     }
     ?>
-
         </div>
-
-
 
         <div class="col-sm-offset-10 col-sm-2 col-xs-offset-7 col-xs-5">
             <!-- Button trigger modal -->
@@ -128,21 +126,21 @@
                         <form class="form-horizontal" name="form" id="form" method="GET" action="" role="form">
                             <div class="form-group">
                                 <label for="name" class="col-sm-2 col-xs-6 control-label">Name</label>
-                                <div class="col-sm-10 col-xs-8">
-                                    <input type="text" name="name" id="name" class="form-control" placeholder="Steward" value="Steward" required pattern="^[A-Z][a-z]{1,44}$">
+                                <div class="col-sm-10  col-xs-12 ">
+                                    <input type="text" name="name" id="name" class="form-control" placeholder="Steward" required pattern="^[A-Z][a-z]{1,44}$">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="employeeno" class="col-sm-2 col-xs-6 control-label">EmployeeNo</label>
-                                <div class="col-sm-10 col-xs-8">
-                                    <input type="text" name="employeeno" id="employeeno" class="form-control" placeholder="0000000001" value="0000000001" required pattern="^\d{1,20}$">
+                                <div class="col-sm-10 col-xs-12">
+                                    <input type="text" name="employeeno" id="employeeno" class="form-control" placeholder="0000000001" required pattern="^\d{1,20}$">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="gender" class="col-sm-2 col-xs-6 control-label">Gender</label>
-                                <div class="radio col-sm-10 col-xs-8">
+                                <div class="radio col-sm-10 col-xs-12">
                                     <label>
-                                        <input type="radio" name="gender" value="Male" checked> Male
+                                        <input type="radio" name="gender" value="Male" required> Male
                                     </label>
                                     <br>
                                     <label>
@@ -152,8 +150,8 @@
                             </div>
                             <div class="form-group">
                                 <label for="department" class="col-sm-2 col-xs-6 control-label">Department</label>
-                                <div class="col-sm-10 col-xs-8">
-                                    <input type="text" name="department" id="department" class="form-control" placeholder="Engineer" value="Engineer" required pattern="^[a-zA-Z]{1,45}$">
+                                <div class="col-sm-10 col-xs-12">
+                                    <input type="text" name="department" id="department" class="form-control" placeholder="Engineer" required pattern="^[a-zA-Z\s]{1,45}$">
                                 </div>
                             </div>
 
@@ -165,7 +163,6 @@
                     <div class="modal-footer">
                         <div>
                             <input type="button" value="Clear" class="btn btn-default" onclick="clearAll()">
-                            <!--                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
                             <input form="form" type="submit" name="insert" class="btn btn-primary" id="submit" value="Insert" autofocus>
                         </div>
                     </div>

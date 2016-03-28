@@ -27,7 +27,7 @@ The project is deployed on Google Application Engine.
 
 
 ## Issues fixing
-### 1. Adding new item works on localhost but not on remote server
+### Adding new item works on localhost but not on remote server
 
 After hours of search and a good sleep, I found the explanation from [official documentations](https://cloud.google.com/appengine/docs/php/googlestorage/):
 >One major difference between writing to a local disk and writing to Google Cloud Storage is that Google Cloud Storage doesn’t support modifying or appending to a file after you close it.
@@ -46,4 +46,9 @@ Therefore, when trying to add new record data `$new_record`, `file_put_contents(
 		$filename = 'gs://everfocus/'.$filename;
 
 
-### 2. 
+
+## About DLL
+- [C++ Dynamic Linking vs Static Linking](https://youtu.be/Jzh4ZULXsvo)
+- [What is a DLL file?](https://youtu.be/Mam2YMosk6A)
+- [DLL](http://www.webopedia.com/TERM/D/DLL.html)
+- [What is a dll?](http://stackoverflow.com/questions/484452/what-is-a-dll)
