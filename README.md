@@ -63,6 +63,7 @@ So the conclusion is, always use overwriting instead of appending and,
 		$filename = 'gs://everfocus/everfocus.csv';
 
 ### Approach 2: Database connection
+Use Google Database.
 
 
 ## Part 2
