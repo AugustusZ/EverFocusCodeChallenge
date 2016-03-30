@@ -1,6 +1,8 @@
 # EverFocus Code Challenge
+Demo links:
 
-Please click [here](http://everfocuscodechallenge.appspot.com/) to see this project. 
+- Filesystem version: [here](http://everfocuscodechallenge.appspot.com/)
+- Database version: [here](http://everfocus.dtcxsymagq.us-west-1.elasticbeanstalk.com/)
 
 ## Introduction 
 See spec [here](Spec.md).
@@ -10,13 +12,15 @@ See spec [here](Spec.md).
 - [Google App Engine Launcher](https://cloud.google.com/appengine/downloads#Google_App_Engine_SDK_for_PHP) (Google App Engine SDK for PHP, version: 1.9.35)
 
 ### Server
-- Google Application Engine
+- Google Application Engine (for filesystem version)
+- Amazon Web Service (for database version)
 - PHP version: 5.5
 
 ## Part 1
-As there is not explicit specification for the approach to achieve the end goal, the most straightforward one to play with `.csv` would be treating it as a text file lying in the filesystem instead of a source data file to be imported into a database.
+As there is not explicit specification for the approach to achieve the end goal, the most straightforward one to play with `.csv` would be treating it as a text file lying in the filesystem (filesystem version) instead of a source data file to be imported into a database (database version).
 
-### Approach 1: Text file manipulation 
+### Approach 1: Filesystem version
+Demo link is [here](http://everfocuscodechallenge.appspot.com/).
 #### Assumptions
 - A valid value for `name` is a single **Capitalized** word, 1 <= #characters <= 45
 - A valid value for `employeeno` only consists of digits, 1 <= #digits <= 20
@@ -62,15 +66,13 @@ So the conclusion is, always use overwriting instead of appending and,
 
 		$filename = 'gs://everfocus/everfocus.csv';
 
-### Approach 2: Database connection
-Use Google Database.
+### Approach 2: Database version
+Demo link is [here](http://everfocus.dtcxsymagq.us-west-1.elasticbeanstalk.com/).
 
+Use Google Database (**authentication for client IP address required**).
 
 ## Part 2
-Windows and Linux (which Google Cloud Storage uses) use completely different executable formats (PE vs. ELF), so a DLL on Linux is definitely **NOT** a COM one. Two approaches:
-
-1. Write a Linux `.so` and run it on Google Cloud Storage server where part 1 PHP code runs.
-2. Write a Windows `.dll` (non-COM) and run it on some Windows server.
+Windows and Linux (which Google Cloud Storage uses) use completely different executable formats (PE vs. ELF), so a DLL on Linux is definitely **NOT** a COM one. 
 
 ### Linux DLL
 
@@ -96,13 +98,6 @@ In conclusion, with the working [repository](https://github.com/AugustusZ/CallDl
 - `enable_functions = "shell_exec"`
 - etc.
 
-### Windows DLL
-- [DLL Tutorial For Beginners (Win)](http://www.codeguru.com/cpp/cpp/cpp_mfc/tutorials/article.php/c9855/DLL-Tutorial-For-Beginners.htm)
-
-Please refer to repository ...[]()
-
-
-
 ### Reference 
 - http://www.ibm.com/developerworks/library/l-dll/
 - http://www.ibm.com/developerworks/library/l-dynamic-libraries/
@@ -110,3 +105,6 @@ Please refer to repository ...[]()
 - [What is a DLL file?](https://youtu.be/Mam2YMosk6A)
 - [DLL](http://www.webopedia.com/TERM/D/DLL.html)
 - [What is a dll?](http://stackoverflow.com/questions/484452/what-is-a-dll)
+- [DLL Tutorial For Beginners (Win)](http://www.codeguru.com/cpp/cpp/cpp_mfc/tutorials/article.php/c9855/DLL-Tutorial-For-Beginners.htm)
+
+
