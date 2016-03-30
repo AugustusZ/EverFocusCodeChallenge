@@ -2,17 +2,23 @@
 
 Please click [here](http://everfocuscodechallenge.appspot.com/) to see this project. 
 
-## Developed with
+## Introduction 
+See spec [here](Spec.md).
+
+### Developed with
 - [Brackets](https://github.com/adobe/brackets/) (version: 1.6.0)
 - [Google App Engine Launcher](https://cloud.google.com/appengine/downloads#Google_App_Engine_SDK_for_PHP) (Google App Engine SDK for PHP, version: 1.9.35)
 
-
-## Server
+### Server
 - Google Application Engine
 - PHP version: 5.5
 
-## Assumptions
-- A valid value for `name` is a single **capitalized** word, 1 <= #characters <= 45
+## Part 1
+As there is not explicit specification for the approach to achieve the end goal, the most straightforward one to play with `.csv` would be treating it as a text file lying in the filesystem instead of a source data file to be imported into a database.
+
+### Approach 1: Text file manipulation 
+#### Assumptions
+- A valid value for `name` is a single **Capitalized** word, 1 <= #characters <= 45
 - A valid value for `employeeno` only consists of digits, 1 <= #digits <= 20
 - A valid value for `gender` is either `Male` or `Female`
 - A valid value for `department` is a word or words, 1 <= #characters <= 45
@@ -20,19 +26,24 @@ Please click [here](http://everfocuscodechallenge.appspot.com/) to see this proj
 
 		google_app_engine.disable_readonly_filesystem = 1 
 		
-	This is, of course, dangerous when there is no access restriction. 
+	Note that this is, of course, dangerous when there is no access restriction.
 
-## Issues fixing
-### Adding new item works on localhost but not on remote server
-
-After hours of search and a good sleep, I found the explanation from [Google official documentations](https://cloud.google.com/appengine/docs/php/googlestorage/):
+#### Concerns
+As [Google official documentations](https://cloud.google.com/appengine/docs/php/googlestorage/) said:
 >One major difference between writing to a local disk and writing to Google Cloud Storage is that Google Cloud Storage doesn’t support modifying or appending to a file after you close it.
 
-Therefore, when trying to add new record data `$new_record`, `file_put_contents($filename, $new_record, FILE_APPEND | LOCK_EX);` works on localhost but **NOT** on Google Cloud Storage. So,
+Basically it means: when we put the `.csv` file in file system, there are some writability we should take care of; otherwise, you might encounter some funny behaviors, e.g., the operation of adding new item works on localhost but not on Google's remote server. Specifically, when trying to add new record data `$new_record`,
+
+	 file_put_contents($filename, $new_record, FILE_APPEND | LOCK_EX);
+	 
+works on localhost but **NOT** on Google Cloud Storage. 
+
+The solution for this is, also indicated in [Google official documentations](https://cloud.google.com/appengine/docs/php/googlestorage/):
 
 >... you must create a new file with the same name, which overwrites the original.
 
-#### Solution:
+And the specific solution is:
+
 1. Overwriting file instead of appending: 
 
 		file_put_contents($filename, file_get_contents($filename) . $new_record);
@@ -41,7 +52,20 @@ Therefore, when trying to add new record data `$new_record`, `file_put_contents(
 
 		$filename = 'gs://everfocus/'.$filename;
 
-## DLL (for Part 2)
+So the conclusion is, always use overwriting instead of appending and,
+
+- when you on localhost, and put `.csv` file in the same folder with `.php`, use
+
+		$filename = 'everfocus.csv';
+	 
+- when you on Google server, and put the `.csv` file in the bucket, e.g. `gs://everfocus/`, use 
+
+		$filename = 'gs://everfocus/everfocus.csv';
+
+### Approach 2: Database connection
+
+
+## Part 2
 Windows and Linux (which Google Cloud Storage uses) use completely different executable formats (PE vs. ELF), so a DLL on Linux is definitely **NOT** a COM one. Two approaches:
 
 1. Write a Linux `.so` and run it on Google Cloud Storage server where part 1 PHP code runs.
@@ -78,7 +102,7 @@ Please refer to repository ...[]()
 
 
 
-## Reference 
+### Reference 
 - http://www.ibm.com/developerworks/library/l-dll/
 - http://www.ibm.com/developerworks/library/l-dynamic-libraries/
 - [C++ Dynamic Linking vs Static Linking](https://youtu.be/Jzh4ZULXsvo)
