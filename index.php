@@ -30,14 +30,21 @@
 
     <div class="container">
         <div id="headerDiv" class="container-fluid">
-            <h1>Part 1</h1>
+            <?php
+            shell_exec_enabled();
+            function shell_exec_enabled() {
+                $disabled = explode(', ', ini_get('disable_functions'));
+                return !in_array('shell_exec', $disabled);
+            }
+            ?>
+                <h1><?php echo shell_exec('./printHelloworld');?></h1>
         </div>
 
         <div id="tableDiv" class="table-responsive">
 
             <?php
     $database = 'employee.csv'; // for locally developing
-    $database = 'gs://everfocus/employee.csv'; // for remote server test
+//    $database = 'gs://everfocus/employee.csv'; // for remote server test
     
     if (isset($_GET['insert'])) { 
         insert_to_database($database); 
