@@ -1,7 +1,9 @@
-all: test upload
+all: dl main
 
-test:
-	dev_appserver.py .
+dl:
+	gcc -c -fpic returnHelloworld.c
+	gcc -shared -lc -o returnHelloworld.so returnHelloworld.o
 
-upload:
-	appcfg.py -A everfocuscodechallenge update .
+main:
+	gcc -o printHelloworld printHelloworld.c -ldl
+	./printHelloworld

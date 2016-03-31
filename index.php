@@ -17,6 +17,25 @@
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
+
+    <?php 
+        // First thing first, get DLL ready on server
+        shell_exec('make'); 
+    ?>
+
+        <?php 
+    $dbhost = "173.194.229.44";
+    $dbuser = "yankuanz";
+    $dbpass = "everfocus";
+    $dbname = "employee";
+    
+    $db = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
+    if (mysqli_connect_errno())
+    {
+    echo "Failed to connect to database: " . mysqli_connect_error();
+    }
+    
+    ?>
 </head>
 
 <body>
@@ -30,83 +49,76 @@
 
     <div class="container">
         <div id="headerDiv" class="container-fluid">
-            <?php
-            shell_exec_enabled();
-            function shell_exec_enabled() {
-                $disabled = explode(', ', ini_get('disable_functions'));
-                return !in_array('shell_exec', $disabled);
-            }
-            ?>
-                <h1><?php echo shell_exec('./printHelloworld');?></h1>
+            <h1>
+                <?php 
+                    // call DLL
+                    echo shell_exec('./printHelloworld'); 
+                ?>
+            </h1>
         </div>
 
         <div id="tableDiv" class="table-responsive">
 
-            <?php
-    $database = 'employee.csv'; // for locally developing
-//    $database = 'gs://everfocus/employee.csv'; // for remote server test
-    
-    if (isset($_GET['insert'])) { 
-        insert_to_database($database); 
-    }
-    
-    $next_id = display_csv($database, "r");
-    
-    function parse_to_tr($string, $tag_name) {
-        if (!$string) {
-            return -1;
-        }
-        
-        $html = "";
-        
-        if ($tag_name == 'th') {
-            $array_for_display = array('Name', 'EmployeeNo', 'Gender', 'Department');
-        } else {
-            $array = str_getcsv($string, $delimiter = ";", $enclosure = '"');
-            $array_for_display = array($array[3], $array[2], $array[4], $array[1]);
-        }
-        
-        foreach ($array_for_display as $value) {
-            $html .= "<$tag_name>$value</$tag_name>";
-        }
-        $html = "<tr>$html</tr>";
+            <?php   
+            if (isset($_POST['insert'])) { 
+                insert_to_database($db); 
+            }
+            display_table($db);
+
+            function display_table($db) {
+                $query = "SELECT * FROM employee";
+                $result = mysqli_query($db, $query);
+                if (!$result) {
+                    die("Fetching data failed.");
+                }
+                echo '<table class="table table-bordered table-hover">';
+                display_header_row();    
+                while ($row = mysqli_fetch_assoc($result)) { // not ==
+                    display_data_row($row);
+                }
+                mysqli_free_result($result); 
+                echo "</table>";
+            }
             
-        echo $html;
-        return $array[0];
-    }
-    
-    function display_csv($filename) {
-        // when reading files either on or created by a Macintosh computer
-        ini_set("auto_detect_line_endings", true);
-        
-        echo '<table class="table table-bordered table-hover">';
+            function display_data_row($row) {
+                $field_names = array('name', 'employeeno', 'gender', 'department');
+                $html = "";
 
-        $file = fopen($filename, "r");
-        parse_to_tr(fgets($file), "th"); 
-        
-        $max_id = -1;
+                foreach ($field_names as $field_name) {
+                    $data_html .= add_tag($row[$field_name], "td");
+                }
 
-        // read one line from csv file in each loop
-        while(! feof($file)) {
-             $max_id = max(parse_to_tr(fgets($file), "td"), $max_id); 
-        }
-        fclose($file);
+                echo add_tag($data_html, "tr");
+            }
 
-        echo '</table>';
-        return $max_id + 1; // return the next valid id (auto-increment)
-    }
-    
-    function insert_to_database($filename) {
-        // get values for insertion
-        $new_values = array($_GET['department'], $_GET['employeeno'], $_GET['name'], $_GET['gender']);//array_slice($_GET, 0, count($_GET) - 1, true);
-        
-        // get a formatted string valid for database record
-        $new_record = $_GET['id'] . ';"' . implode('";"', $new_values) . "\"\n";
-        
-        // Write the contents to the file
-        file_put_contents($filename, file_get_contents($filename) . $new_record);
-    }
-    ?>
+            function display_header_row() {
+                $headers = array('Name', 'EmployeeNo', 'Gender', 'Department');
+                $header_html = "";
+
+                foreach ($headers as $header) {
+                    $header_html .= add_tag($header, "th");
+                }
+
+                echo add_tag($header_html, "tr");
+            }
+
+            function add_tag($value, $tag_name) {
+                return "<$tag_name>$value</$tag_name>";
+            }
+  
+            function insert_to_database($db) {
+                // get values for insertion
+                $query = "INSERT INTO employee (";
+                $query .= "department, employeeno, name, gender";
+                $query .= ") VALUES (";
+                $query .= "'{$_POST['department']}', '{$_POST['employeeno']}', '{$_POST['name']}', '{$_POST['gender']}'";
+                $query .= ")";
+                $result = mysqli_query($db, $query);
+                if (!$result) {
+                    die("Inserting data failed.");
+                }
+            }
+            ?>
         </div>
 
         <div class="col-sm-offset-10 col-sm-2 col-xs-offset-7 col-xs-5">
@@ -130,7 +142,7 @@
 
                     <!-- Modal Body -->
                     <div class="modal-body">
-                        <form class="form-horizontal" name="form" id="form" method="GET" action="" role="form">
+                        <form class="form-horizontal" name="form" id="form" method="POST" action="" role="form">
                             <div class="form-group">
                                 <label for="name" class="col-sm-2 col-xs-6 control-label">Name</label>
                                 <div class="col-sm-10  col-xs-12 ">
@@ -180,3 +192,7 @@
 </body>
 
 </html>
+
+<?php 
+    mysqli_close($db); 
+?>
